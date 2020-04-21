@@ -28,9 +28,14 @@ curl https://github.com/miversen33/server-automation-setup/install-script.py --o
 If you are installing us manually, you have the following parameter(s) available for you to specify
 ```
 --global
-    By default we will install into the user python module directory (via pip). If global is specified, we will install the package globally (via pip) and then link it to /usr/bin and make the script executable. Meaning, you can then run the script simply by executing `server_setup` instead of `python3 -m server_setup`.
+    By default we will install into the user python module directory 
+    (via pip). If global is specified, we will install the package 
+    globally (via pip) and then link it to /usr/bin and make the script 
+    executable. Meaning, you can then run the script simply by executing 
+    `server_setup` instead of `python3 -m server_setup`.
 
-    Note this will only work on Linux. Sorry Windows users, this is a feature that will eventually make its way over to you
+    Note this will only work on Linux. 
+    Sorry Windows users, this is a feature that will eventually make its way over to you
 ```
 #### Dependencies
 Regardless of which decision you chose for installation, our dependencies are already installed. 
@@ -47,9 +52,11 @@ python3 -m server_setup -f=yourfile
 ```
 #### Available parameters
 ```
--f, --file: Your configuration File. This must be a JSON or YAML file, unless the script excplicitly gives you a file to run.
+-f, --file: Your configuration File. 
+    This must be a JSON or YAML file, unless the script excplicitly gives you a file to run.
 -v, --verbose: Tells the system to print out more details
--d, --debug: When enabled, we will still connect to the remote server, but then we simply dump all the commands we would run to the terminal window for the user to see
+-d, --debug: When enabled, we will still connect to the remote server, 
+    but then we simply dump all the commands we would run to the terminal window for the user to see
 -e, --onfail: How to handle failure. Options are (continue:default, die)
 ```
 
@@ -64,7 +71,7 @@ Server Setup completed with errors. To rerun failed scripts, execute the followi
 Configuration files can be provided in either [JSON](#json) or [YAML](#yaml) formats. Below are those 2 formats, with documentation of any available options that can be provided
 
 #### [JSON](https://github.com/miversen33/server_automation/setupconfig.doc.json)
-```json
+```jsonc
 {
     "server_connection": {
         // Optional
