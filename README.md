@@ -23,7 +23,7 @@ python3 -m pip install server-automation-setup
 #### Manual
 Or if you are feeling adventurous, you can download the install script from github and run that
 ```
-curl https://github.com/miversen33/server-automation-setup/install-script.py --output /tmp/install-script.py && python3 /tmp/install-script.py
+curl https://github.com/miversen33/Server-Automation-Setup/install-script.py --output /tmp/install-script.py && python3 /tmp/install-script.py
 ```
 If you are installing us manually, you have the following parameter(s) available for you to specify
 ```
