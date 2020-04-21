@@ -2,8 +2,7 @@
 
 _available_formats = 'JSON'
 
-import configuration
-import distrolayer
+import serverautomation
 import argparse
 import json
 import os
@@ -44,8 +43,8 @@ except ImportError as exception:
     print("Invoke not installed. Please re-run setup script. 'Execute setupscript.py'")
     raise exception
 
-from configuration import Configuration 
-from distrolayer import DistroAbstractionLayer
+from serverautomation.configuration import Configuration 
+from serverautomation.distrolayer import DistroAbstractionLayer
 from getpass import getpass, getuser
 from random import randint
 from os.path import isfile, join
