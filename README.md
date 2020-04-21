@@ -64,7 +64,7 @@ python3 -m server_setup -f=yourfile
 It happens. Something causes one of the installation scripts to crash. The server is bounced. One of the external scripts breaks. Etc.
 So what happens when a failure occurs while setting up your shiny new server? When an error occurs, we handle it (depending on what [`--onfail`](#available-parameters) is set to). Regardless of the status of [`--onfail`](#available-parameters), we will keep track of the script(s) that fail during setup. Once we are finished running, if failures were found, we provide you a special file that you can use to only execute the failed script(s). It will look something like this
 ```
-Server Setup completed with errors. To rerun failed scripts, execute the following command. server_setup --file 127.0.0.1-20200420-202251
+Server Setup completed with errors. To rerun failed scripts, execute the following command. python -m server_setup --file 127.0.0.1-20200420-202251
 ```
 
 ### Configuration
