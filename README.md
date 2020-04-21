@@ -70,7 +70,7 @@ Server Setup completed with errors. To rerun failed scripts, execute the followi
 ### Configuration
 Configuration files can be provided in either [JSON](#json) or [YAML](#yaml) formats. Below are those 2 formats, with documentation of any available options that can be provided
 
-#### [JSON](https://github.com/miversen33/server_automation/setupconfig.doc.json)
+#### [JSON](https://github.com/miversen33/Server-Automation-Setup/blob/master/setupconfig.doc.json)
 ```jsonc
 {
     "server_connection": {
@@ -181,7 +181,7 @@ Configuration files can be provided in either [JSON](#json) or [YAML](#yaml) for
 }
 ```
 
-### [YAML](https://github.com/miversen33/server_automation/setupconfig.doc.yaml)
+### [YAML](https://github.com/miversen33/Server-Automation-Setup/blob/master/setupconfig.doc.yaml)
 ```yaml
 server_connection:
   # Optional
