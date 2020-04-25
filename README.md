@@ -55,12 +55,6 @@ If you installed the server automation tool via pip, you can uninstall it with t
 python3 -m pip uninstall server-automation-setup
 ```
 
-If you installed te server automation tool manually, pip may not recognize it. To perform an uninstall in this case, run the following command
-```
-curl https://raw.githubusercontent.com/miversen33/Server-Automation-Setup/master/install-script.py >> /tmp/install-script.py && python3 /tmp/install-script.py --uninstall
-```
-[**NOTE: Be careful executing random files off the internet. Always inspect them first**](https://github.com/miversen33/Server-Automation-Setup/blob/master/install-script.py)
-
 ***
 <br>
 

@@ -15,86 +15,75 @@ from urllib import request
 from shutil import copyfileobj
 from subprocess import run
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-i", "--install", help="Installs Server Automation Tool")
-parser.add_argument("-u", "--uninstall", help="Uninstalls Server Automation Tool")
-
 TEMP_DIR = ''
 GIT_URL = 'https://github.com/miversen33/Server-Automation-Setup/archive/master.zip'
-OUTPUT_FILE = 'serverautomation.zip'
+PIP_URL = 'https://bootstrap.pypa.io/get-pip.py'
+PIP_FILE = 'get-pip.py'
+OUTPUT_ZIP = 'serverautomation.zip'
 SAVE_DIR = 'Server-Automation-Setup-master'
 INSTALL_DIR = ''
 BIN_LOCATION = ''
-INSTALL_COMMAND = 'ln -s $INSTALL_LOCATION$/__main__.py $BIN_LOCATION$/serverautomation'
-PERMISSION_COMMAND = 'chmod +x $INSTALL_LOCATION$/__main__.py'
+INSTALL_COMMAND = 'python3 -m pip install .'
 
-if platform.system() == 'Windows':
-    TEMP_DIR = join("C:", "Users", getuser(), 'AppData', 'Local', "tmp")
-    raise Exception('Windows install via manual install is not supported at this time!')
+def _install_pip():
+    print('Downloading Pip')
+    with urllib.request.urlopen(PIP_URL) as response, open(join(TEMP_DIR, PIP_FILE), 'wb') as out_file:
+        copyfileobj(response, out_file)
+    print('Installing Pip')
+    run(['python3', join(TEMP_DIR, PIP_FILE)])
 
-if platform.system() == 'Linux':
-    TEMP_DIR = join("/tmp", "serverautomation")
-    INSTALL_DIR = join("/home", getuser(), ".local", "lib", "serverautomation")
-    BIN_LOCATION = join('/home', getuser(), '.local', 'bin')
-    INSTALL_COMMAND = INSTALL_COMMAND.replace('$INSTALL_LOCATION$', INSTALL_DIR)
-    INSTALL_COMMAND = INSTALL_COMMAND.replace('$BIN_LOCATION$', BIN_LOCATION) 
-    PERMISSION_COMMAND = PERMISSION_COMMAND.replace('$INSTALL_LOCATION$', INSTALL_DIR)
 
-if platform.system() == 'Darwin':
-    TEMP_DIR = join("/tmp", "serverautomation")
+def main():
+    if platform.system() == 'Windows':
+        TEMP_DIR = join("C:", "Users", getuser(), 'AppData', 'Local', "tmp")
+        raise Exception('Windows install via manual install is not supported at this time')
 
-if TEMP_DIR == '':
-    raise Exception("Unable to establish OS type!")
+    if platform.system() == 'Linux':
+        TEMP_DIR = join("/tmp", "serverautomation")
+        INSTALL_DIR = join("/home", getuser(), ".local", "lib", "serverautomation")
+        BIN_LOCATION = join('/home', getuser(), '.local', 'bin')
 
-try:
-    shutil.rmtree(TEMP_DIR)
-except FileNotFoundError:
-    pass
+    if platform.system() == 'Darwin':
+        TEMP_DIR = join("/tmp", "serverautomation")
 
-try:
-    os.mkdir(TEMP_DIR)
-except FileExistsError:
-    pass
+    if TEMP_DIR == '':
+        raise Exception("Unable to establish OS type!")
 
-def _install():
+    try:
+        shutil.rmtree(TEMP_DIR)
+    except FileNotFoundError:
+        pass
+
+    try:
+        os.mkdir(TEMP_DIR)
+    except FileExistsError:
+        pass
+
+    output = run(['python3', '-m', 'pip'], stdout=subprocess.DEVNULL)
+    if output.returncode == 1 and 'No module named pip' in output.stdout:
+        print('Unable to find pip')
+        _install_pip()
+
     print('Downloading latest version from git')
-    with urllib.request.urlopen(GIT_URL) as response, open(join(TEMP_DIR, OUTPUT_FILE), 'wb') as out_file:
+    with urllib.request.urlopen(GIT_URL) as response, open(join(TEMP_DIR, OUTPUT_ZIP), 'wb') as out_file:
         copyfileobj(response, out_file)
 
-    repo_zip = zipfile.ZipFile(join(TEMP_DIR, OUTPUT_FILE), 'r')
+    repo_zip = zipfile.ZipFile(join(TEMP_DIR, OUTPUT_ZIP), 'r')
     repo_zip.extractall(TEMP_DIR)
     repo_zip.close()
 
     os.chdir(join(TEMP_DIR, SAVE_DIR))
-    print('Putting files in place')
-    try:
-        shutil.copytree(join(TEMP_DIR, SAVE_DIR, 'serverautomation'), INSTALL_DIR)
-    except FileExistsError:
-        shutil.rmtree(INSTALL_DIR)
-        shutil.copytree(join(TEMP_DIR, SAVE_DIR, 'serverautomation'), INSTALL_DIR)
+    os.rename('base-setup.py', 'setup.py')
+    file = open('serverautomation/__init__.py', 'w')
+    file.close()
+
+    print('Installing Server Automation Tool')
     run(INSTALL_COMMAND.split(' '))
-    run(PERMISSION_COMMAND.split(' '))
 
     print('Cleaing up')
     shutil.rmtree(TEMP_DIR)
 
     print("Finished! Execute 'serverautomation --help' to get started!")
-
-def _uninstall():
-    print('Finding Install Location')
-    try:
-        shutil.rmtree(INSTALL_DIR)
-        os.remove(join(BIN_LOCATION, 'serverautomation'))
-    except FileNotFoundError:
-        pass
-    print('Successfully Uninstalled Server Automation Tool!')
-
-def main():
-    input_args = parser.parse_args()
-    if input_args.uninstall:
-        _uninstall
-    else:
-        _install()
 
 if __name__ == '__main__':
     main()
