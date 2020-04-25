@@ -62,7 +62,7 @@ SUDOPASS_LAMBDA = lambda elevation_password: Responder(
 
 DEBUG = False
 TMP_PATH = f'/tmp/{randint(0, 10000)}'
-CACHE_DIR = f'/home/{getuser()}/.server_automation/'
+CACHE_DIR = f'/home/{getuser()}/.serverautomation/'
 try:
     os.mkdir(CACHE_DIR)
 except FileExistsError:
@@ -141,7 +141,7 @@ def run_remotely(server_connection, command, extra_params, extra_info):
                 successful = True
             except Exception as exception:
                 print(exception)
-                if 'already' in exception:
+                if 'already' in exception[0]:
                     successful = True
         else:
             print(f'''mkdir -p {TMP_PATH}''')
@@ -243,54 +243,58 @@ def parse_file(input_file):
         raise FileNotFoundError(f'Input File: {input_file} Not Found')
     return input_file, False
 
-input_args = parser.parse_args()
-DEBUG = input_args.debug
-file, resume = parse_file(input_args.file)
-VERBOSE = input_args.verbose
-if input_args.onfail == 'die':
-    die_on_fail = True
-else:
-    die_on_fail = False
-
-if resume:
-    with open(file, 'rb') as resume_data:
-        server_setup = pickle.load(resume_data)
-        server_setup.reset_failures()
-    os.remove(file)
-else:
-    server_setup = Configuration(file, VERBOSE)
-connection_info = server_setup.connection()
-server_configs = server_setup.configs()
-server_connection = connect_to_server(connection_info)
-dal = server_connection.distro
-print(f'Distro: {dal.distro}')
-running = True
-while running:
-    info = server_configs.get_next_command_info(dal)
-    if info:
-
-        if info.location == 'remote':
-            success = run_remotely(server_connection, info.command, info.extra_params, info.extra_info)
-        else:
-            success = run_locally(server_connection, info.command, info.extra_params, info.extra_info)
-        if success:
-            server_configs.current_command_success()
-        else:
-            server_configs.current_command_failed()
-            if die_on_fail:
-                break
-        running = True
+def main():
+    input_args = parser.parse_args()
+    DEBUG = input_args.debug
+    file, resume = parse_file(input_args.file)
+    VERBOSE = input_args.verbose
+    if input_args.onfail == 'die':
+        die_on_fail = True
     else:
-        running = False
+        die_on_fail = False
 
-if server_configs.status == Configuration.Config.STATUS_FAILURE:
-    output_file_name = f'{connection_info.ip_address}-{datetime.datetime.now().strftime("%Y%m%d-%H%M%S")}'
-    output_file = open(f'{CACHE_DIR}.{output_file_name}.sacfg', 'wb')
-    pickle.dump(server_setup, output_file)
-    output_file.close()
-    if die_on_fail:
-        print(f'Server Setup Failed. To pickup where we left off, execute the following command. python3 -m server_setup --file {output_file_name}')
+    if resume:
+        with open(file, 'rb') as resume_data:
+            server_setup = pickle.load(resume_data)
+            server_setup.reset_failures()
+        os.remove(file)
     else:
-        print(f'Server Setup completed with errors. To rerun failed scripts, execute the following command. python3 -m server_setup --file {output_file_name}')
-else:
-    print('Server Setup complete!')
+        server_setup = Configuration(file, VERBOSE)
+    connection_info = server_setup.connection()
+    server_configs = server_setup.configs()
+    server_connection = connect_to_server(connection_info)
+    dal = server_connection.distro
+    print(f'Distro: {dal.distro}')
+    running = True
+    while running:
+        info = server_configs.get_next_command_info(dal)
+        if info:
+
+            if info.location == 'remote':
+                success = run_remotely(server_connection, info.command, info.extra_params, info.extra_info)
+            else:
+                success = run_locally(server_connection, info.command, info.extra_params, info.extra_info)
+            if success:
+                server_configs.current_command_success()
+            else:
+                server_configs.current_command_failed()
+                if die_on_fail:
+                    break
+            running = True
+        else:
+            running = False
+
+    if server_configs.status == Configuration.Config.STATUS_FAILURE:
+        output_file_name = f'{connection_info.ip_address}-{datetime.datetime.now().strftime("%Y%m%d-%H%M%S")}'
+        output_file = open(f'{CACHE_DIR}.{output_file_name}.sacfg', 'wb')
+        pickle.dump(server_setup, output_file)
+        output_file.close()
+        if die_on_fail:
+            print(f'Server Setup Failed. To pickup where we left off, execute the following command. serverautomation --file {output_file_name}')
+        else:
+            print(f'Server Setup completed with errors. To rerun failed scripts, execute the following command. serverautomation --file {output_file_name}')
+    else:
+        print('Server Setup complete!')
+
+if __name__ == '__main__':
+    main()
