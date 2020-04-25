@@ -3,16 +3,18 @@
 A helper program that will setup a remote server for you
 
 ## Table Of Contents
-- [Installation](#installation)
-  - [PIP](#pip)
-  - [Manual](#manual)
-  - [Dependencies](#dependencies)
-  - [Uninstallation](#uninstallation)
-- [How To Run](#how-to-run)
-  - [Parameters](#available-parameters)
-  - [What About Server Failure?](#what-about-server-failure?)
-- [Configuration](#configuration)
-    - [JSON](#json)
+- [Server Automation Setup](#server-automation-setup)
+  - [Table Of Contents](#table-of-contents)
+    - [Installation](#installation)
+      - [PIP](#pip)
+      - [Manual](#manual)
+      - [Dependencies](#dependencies)
+      - [Uninstallation](#uninstallation)
+    - [How To Run](#how-to-run)
+      - [Available parameters](#available-parameters)
+      - [What About Server Failure?](#what-about-server-failure)
+    - [Configuration](#configuration)
+      - [JSON](#json)
     - [YAML](#yaml)
 
 ### Installation
@@ -22,14 +24,17 @@ A helper program that will setup a remote server for you
 python3 -m pip install server-automation-setup
 ```
 #### Manual
-Or if you are feeling adventurous, you can download the install script from github and run that
+Or if you are feeling adventurous, you can download the install script from github and run the following command.
 ```
 curl https://raw.githubusercontent.com/miversen33/Server-Automation-Setup/master/install-script.py >> /tmp/install-script.py && python3 /tmp/install-script.py
 ```
+[**NOTE: Be careful executing random files off the internet. Always inspect them first**](https://github.com/miversen33/Server-Automation-Setup/blob/master/install-script.py)
+
 Once its finished, you should see output that looks like 
 ```
 Finished! Execute 'serverautomation --help' to get started!
 ```
+
 
 #### Dependencies
 Regardless of which decision you chose for installation, our dependencies are already installed. 
@@ -39,11 +44,19 @@ The programs we rely on to function properly are
 * [Invoke](https://github.com/pyinvoke/invoke)
 * [Paramiko](https://github.com/paramiko/paramiko)
 
+
 #### Uninstallation
-To uninstall the Server Automation Setup tool, simply run 
+If you installed the server automation tool via pip, you can uninstall it with the following command 
 ```
 python3 -m pip uninstall server-automation-setup
 ```
+
+If you installed te server automation tool manually, pip may not recognize it. To perform an uninstall in this case, run the following command
+```
+curl https://raw.githubusercontent.com/miversen33/Server-Automation-Setup/master/install-script.py >> /tmp/install-script.py && python3 /tmp/install-script.py --uninstall
+```
+[**NOTE: Be careful executing random files off the internet. Always inspect them first**](https://github.com/miversen33/Server-Automation-Setup/blob/master/install-script.py)
+
 
 ### How To Run
 Running the setup script is easy. Simply provide it a configuration file to load and it handles everything else.
@@ -66,6 +79,7 @@ So what happens when a failure occurs while setting up your shiny new server? Wh
 ```
 Server Setup completed with errors. To rerun failed scripts, execute the following command. serverautomation --file 127.0.0.1-20200420-202251
 ```
+
 
 ### Configuration
 Configuration files can be provided in either [JSON](#json) or [YAML](#yaml) formats. Below are those 2 formats, with documentation of any available options that can be provided

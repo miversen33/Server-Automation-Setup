@@ -7,6 +7,7 @@ import urllib
 import shutil
 import zipfile
 import subprocess
+import argparse
 
 from getpass import getuser
 from os.path import join
@@ -14,11 +15,16 @@ from urllib import request
 from shutil import copyfileobj
 from subprocess import run
 
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--install", help="Installs Server Automation Tool")
+parser.add_argument("-u", "--uninstall", help="Uninstalls Server Automation Tool")
+
 TEMP_DIR = ''
 GIT_URL = 'https://github.com/miversen33/Server-Automation-Setup/archive/master.zip'
 OUTPUT_FILE = 'serverautomation.zip'
 SAVE_DIR = 'Server-Automation-Setup-master'
 INSTALL_DIR = ''
+BIN_LOCATION = ''
 INSTALL_COMMAND = 'ln -s $INSTALL_LOCATION$/__main__.py $BIN_LOCATION$/serverautomation'
 PERMISSION_COMMAND = 'chmod +x $INSTALL_LOCATION$/__main__.py'
 
@@ -50,25 +56,45 @@ try:
 except FileExistsError:
     pass
 
-print('Downloading latest version from git')
-with urllib.request.urlopen(GIT_URL) as response, open(join(TEMP_DIR, OUTPUT_FILE), 'wb') as out_file:
-    copyfileobj(response, out_file)
+def _install():
+    print('Downloading latest version from git')
+    with urllib.request.urlopen(GIT_URL) as response, open(join(TEMP_DIR, OUTPUT_FILE), 'wb') as out_file:
+        copyfileobj(response, out_file)
 
-repo_zip = zipfile.ZipFile(join(TEMP_DIR, OUTPUT_FILE), 'r')
-repo_zip.extractall(TEMP_DIR)
-repo_zip.close()
+    repo_zip = zipfile.ZipFile(join(TEMP_DIR, OUTPUT_FILE), 'r')
+    repo_zip.extractall(TEMP_DIR)
+    repo_zip.close()
 
-os.chdir(join(TEMP_DIR, SAVE_DIR))
-print('Putting files in place')
-try:
-    shutil.copytree(join(TEMP_DIR, SAVE_DIR, 'serverautomation'), INSTALL_DIR)
-except FileExistsError:
-    shutil.rmtree(INSTALL_DIR)
-    shutil.copytree(join(TEMP_DIR, SAVE_DIR, 'serverautomation'), INSTALL_DIR)
-run(INSTALL_COMMAND.split(' '))
-run(PERMISSION_COMMAND.split(' '))
+    os.chdir(join(TEMP_DIR, SAVE_DIR))
+    print('Putting files in place')
+    try:
+        shutil.copytree(join(TEMP_DIR, SAVE_DIR, 'serverautomation'), INSTALL_DIR)
+    except FileExistsError:
+        shutil.rmtree(INSTALL_DIR)
+        shutil.copytree(join(TEMP_DIR, SAVE_DIR, 'serverautomation'), INSTALL_DIR)
+    run(INSTALL_COMMAND.split(' '))
+    run(PERMISSION_COMMAND.split(' '))
 
-print('Cleaing up')
-shutil.rmtree(TEMP_DIR)
+    print('Cleaing up')
+    shutil.rmtree(TEMP_DIR)
 
-print("Finished! Execute 'serverautomation --help' to get started!")
+    print("Finished! Execute 'serverautomation --help' to get started!")
+
+def _uninstall():
+    print('Finding Install Location')
+    try:
+        shutil.rmtree(INSTALL_DIR)
+        os.remove(join(BIN_LOCATION, 'serverautomation'))
+    except FileNotFoundError:
+        pass
+    print('Successfully Uninstalled Server Automation Tool!')
+
+def main():
+    input_args = parser.parse_args()
+    if input_args.uninstall:
+        _uninstall
+    else:
+        _install()
+
+if __name__ == '__main__':
+    main()
