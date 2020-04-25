@@ -475,7 +475,7 @@ class Configuration:
                     u['install_shell_if_missing'].isspace()
                 ):
                 install_shell_if_missing = True
-            user_info = User(
+            user_info = Configuration.User(
                     username=username,
                     password=password,
                     user_shell = shell,
