@@ -1,8 +1,15 @@
 #!/usr/bin/env python
 
 _available_formats = 'JSON'
+_serverautomation_module_available = True
 
-import serverautomation
+try:
+    # We prefer using this, but if we are being called directly, this import fails. Instead of
+    # blowing up, we just catch the failure and move on
+    import serverautomation
+except ModuleNotFoundError:
+    _serverautomation_module_available = False
+
 import argparse
 import json
 import os
@@ -43,8 +50,12 @@ except ImportError as exception:
     print("Invoke not installed. Please re-run setup script. 'Execute setupscript.py'")
     raise exception
 
-from serverautomation.configuration import Configuration 
-from serverautomation.distrolayer import DistroAbstractionLayer
+if _serverautomation_module_available:
+    from serverautomation.configuration import Configuration 
+    from serverautomation.distrolayer import DistroAbstractionLayer
+else:
+    from configuration import Configuration
+    from distrolayer import DistroAbstractionLayer
 from getpass import getpass, getuser
 from random import randint
 from os.path import isfile, join
