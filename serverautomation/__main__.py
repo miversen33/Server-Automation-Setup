@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 _available_formats = 'JSON'
 _serverautomation_module_available = True
