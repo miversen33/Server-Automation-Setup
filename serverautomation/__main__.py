@@ -80,19 +80,20 @@ except FileExistsError:
     pass
 VERBOSE = False
 
-def connect_to_server(config, retry_limit=4, current_retry_count=0):
+def connect_to_server(config, retry_limit=4, current_retry_count=1):
     hostname = config.hostname
     elevation_password = config.elevation_pass
     ssh_key_password = config.ssh_key_password
     user = config.ssh_user
     password = config.ssh_user_password
+    ssh_key = config.ssh_key
     try:
         # We should be creating the connect_kwargs before hand and adding the key if it was provided
-        server_connection = Connection(host=hostname, user=user, connect_kwargs=dict(password=password, passphrase=ssh_key_password))
+        server_connection = Connection(host=hostname, user=user, connect_kwargs=dict(key_filename=ssh_key, password=password, passphrase=ssh_key_password))
         # Yes, we are saving the elevation password to an object and passing it around. Fight me
         server_connection.sudopass = elevation_password
         # Checking to make sure we can actually get connected to the server.
-        if current_retry_count == 0:
+        if current_retry_count == 1:
             print(f'Attempting to connect to {hostname}')
         else:
             print(f'Attempting to connect to {hostname}. Attempt #{current_retry_count}')
@@ -109,21 +110,38 @@ def connect_to_server(config, retry_limit=4, current_retry_count=0):
         sys.exit(1)
     except ssh_exception.PasswordRequiredException:
         if current_retry_count >= retry_limit:
-            print(f'Failed to connect to host "{hostname}" due to some issue with ssh key password')
+            print(f'Failed to connect to host "{hostname}" due to some issue other password')
             sys.exit(1)
 
-        config.ssh_key_pass = getpass('Please Enter SSH Password: ')
+        config.ssh_key_pass = None
         return connect_to_server(
             config,
             current_retry_count=current_retry_count+1
         )
-    except ssh_exception.SSHException:
+    except ssh_exception.AuthenticationException as exception:
+        error = exception.args[0]
+        if error == 'No authentication methods available':
+            raise invoke_exceptions.AuthFailure()
         if current_retry_count >= retry_limit:
             print(f'Failed to connect to host "{hostname}" due to incorrect ssh key password"')
             sys.exit(1)
         
-        print('Invalid SSH Key password')
-        config.ssh_key_pass = None
+        print('Missing User Password')
+        config.ssh_user_password = getpass(f"Please Enter {config.ssh_user}'s password: ")
+        return connect_to_server(
+            config,
+            current_retry_count=current_retry_count+1
+        )
+    except ssh_exception.SSHException as exception:
+        if current_retry_count >= retry_limit:
+            print(f'Failed to connect to host "{hostname}" due to incorrect ssh key password"')
+            sys.exit(1)
+        
+        if config.ssh_user_password:
+            print('Invalid SSH User Password')
+        else:
+            print('No User SSH Password Provided')
+        config.ssh_user_password = getpass(f"Please {config.ssh_user}'s SSH Password: ")
         return connect_to_server(
             config,
             current_retry_count=current_retry_count+1
