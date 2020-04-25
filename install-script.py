@@ -60,7 +60,11 @@ repo_zip.close()
 
 os.chdir(join(TEMP_DIR, SAVE_DIR))
 print('Putting files in place')
-shutil.copytree(join(TEMP_DIR, SAVE_DIR, 'serverautomation'), INSTALL_DIR)
+try:
+    shutil.copytree(join(TEMP_DIR, SAVE_DIR, 'serverautomation'), INSTALL_DIR)
+except FileExistsError:
+    shutil.rmtree(INSTALL_DIR)
+    shutil.copytree(join(TEMP_DIR, SAVE_DIR, 'serverautomation'), INSTALL_DIR)
 run(INSTALL_COMMAND.split(' '))
 run(PERMISSION_COMMAND.split(' '))
 
