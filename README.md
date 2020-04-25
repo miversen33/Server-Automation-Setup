@@ -7,6 +7,7 @@ A helper program that will setup a remote server for you
   - [PIP](#pip)
   - [Manual](#manual)
   - [Dependencies](#dependencies)
+  - [Uninstallation](#uninstallation)
 - [How To Run](#how-to-run)
   - [Parameters](#available-parameters)
   - [What About Server Failure?](#what-about-server-failure?)
@@ -25,18 +26,7 @@ Or if you are feeling adventurous, you can download the install script from gith
 ```
 curl https://github.com/miversen33/Server-Automation-Setup/install-script.py --output /tmp/install-script.py && python3 /tmp/install-script.py
 ```
-If you are installing us manually, you have the following parameter(s) available for you to specify
-```
---global
-    By default we will install into the user python module directory 
-    (via pip). If global is specified, we will install the package 
-    globally (via pip) and then link it to /usr/bin and make the script 
-    executable. Meaning, you can then run the script simply by executing 
-    `server_setup` instead of `python3 -m server_setup`.
 
-    Note this will only work on Linux. 
-    Sorry Windows users, this is a feature that will eventually make its way over to you
-```
 #### Dependencies
 Regardless of which decision you chose for installation, our dependencies are already installed. 
 The programs we rely on to function properly are
@@ -45,14 +35,20 @@ The programs we rely on to function properly are
 * [Invoke](https://github.com/pyinvoke/invoke)
 * [Paramiko](https://github.com/paramiko/paramiko)
 
+#### Uninstallation
+To uninstall the Server Automation Setup tool, simply run 
+```
+python3 -m pip uninstall server-automation-setup
+```
+
 ### How To Run
 Running the setup script is easy. Simply provide it a configuration file to load and it handles everything else.
 ```
-python3 -m server_setup -f=yourfile
+serverautomation -f=yourfile
 ```
 #### Available parameters
 ```
--f, --file: Your configuration File. 
+-f, --file: Your configuration File.
     This must be a JSON or YAML file, unless the script excplicitly gives you a file to run.
 -v, --verbose: Tells the system to print out more details
 -d, --debug: When enabled, we will still connect to the remote server, 
@@ -64,14 +60,14 @@ python3 -m server_setup -f=yourfile
 It happens. Something causes one of the installation scripts to crash. The server is bounced. One of the external scripts breaks. Etc.
 So what happens when a failure occurs while setting up your shiny new server? When an error occurs, we handle it (depending on what [`--onfail`](#available-parameters) is set to). Regardless of the status of [`--onfail`](#available-parameters), we will keep track of the script(s) that fail during setup. Once we are finished running, if failures were found, we provide you a special file that you can use to only execute the failed script(s). It will look something like this
 ```
-Server Setup completed with errors. To rerun failed scripts, execute the following command. python -m server_setup --file 127.0.0.1-20200420-202251
+Server Setup completed with errors. To rerun failed scripts, execute the following command. serverautomation --file 127.0.0.1-20200420-202251
 ```
 
 ### Configuration
 Configuration files can be provided in either [JSON](#json) or [YAML](#yaml) formats. Below are those 2 formats, with documentation of any available options that can be provided
 
 #### [JSON](https://github.com/miversen33/Server-Automation-Setup/blob/master/setupconfig.doc.json)
-```jsonc
+```
 {
     "server_connection": {
         // Optional
