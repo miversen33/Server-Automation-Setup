@@ -9,6 +9,9 @@ server_connection:
   # if not provided, we assume you want to ssh in as root.
   ssh_user: someuser
   # Optional
+  # if an ssh_user is provided, you can provide an ssh password for that user
+  ssh_user_password: "somepassword"
+  # Optional
   # if used, this needs to be the path to an ssh key, or if the file is in the same directory this can be the ssh key name directly
   ssh_key: id_rsa
   # Optional
