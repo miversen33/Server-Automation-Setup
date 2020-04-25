@@ -454,7 +454,11 @@ class Configuration:
             shell_dependencies = self.__create_users(connection_setup['users'])
 
         if 'dependencies' in connection_setup.keys():
-            [self.server_config.add_dependency(shell_dependency) for shell_dependency in shell_dependencies]
+            try:
+                [self.server_config.add_dependency(shell_dependency) for shell_dependency in shell_dependencies]
+            except UnboundLocalError:
+                # No shell dependencies were passed
+                pass
             [self.server_config.add_dependency(dependency) for dependency in connection_setup['dependencies']]
 
         if 'server_configuration' in connection_setup.keys() or 'server_config' in connection_setup.keys():
@@ -462,9 +466,10 @@ class Configuration:
                 c = connection_setup['server_configuration']
             except:
                 c = connection_setup['server_config']
-            if 'enable_service' in c.keys():
-                [self.server_config.add_optional_configuration('enable_service', service) for service in c['enable_service']]
-            [self.server_config.add_optional_configuration(command, param) for command, param in c.items() if command != 'enable_service']
+            if c:
+                if 'enable_service' in c.keys():
+                    [self.server_config.add_optional_configuration('enable_service', service) for service in c['enable_service']]
+                [self.server_config.add_optional_configuration(command, param) for command, param in c.items() if command != 'enable_service']
         if 'configurations' in connection_setup.keys():
             [self.server_config.add_external_script(script) for script in connection_setup['configurations']]
 
