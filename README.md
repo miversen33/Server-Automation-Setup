@@ -109,6 +109,9 @@ Configuration files can be provided in either [JSON](#json) or [YAML](#yaml) for
         // if used, this needs to be the path to an ssh key, or if the file is in the same directory this can be the ssh key name directly
         "ssh_key": "id_rsa",
         // Optional
+        // if an ssh_user is provided, you can provide an ssh password for that user
+        "ssh_user_password": "somepassword",
+        // Optional
         // If not provided, we will ask for it once
         "ssh_key_password": "somepassword",
         // Optional
@@ -136,7 +139,7 @@ Configuration files can be provided in either [JSON](#json) or [YAML](#yaml) for
             // The system will attempt to make sure that the user has sudo permissions if it is placed in
             // either sudo or wheel. The system will try to verify that either of those groups exist and have the appropriate permission
             // It is better to be sure you know what you want here, but we will try for you
-            "groups": "sudo",
+            "groups": ["sudo"],
             // Optional
             // This is not case sensitive, but it does have to be a boolean T/F. If left blank, it will be considered false
             "system_user": "False",
@@ -199,7 +202,6 @@ Configuration files can be provided in either [JSON](#json) or [YAML](#yaml) for
         "someFile2.pl --someparam=somevalue",
         "someFile3.sh"
     ]
-
 }
 ```
 
@@ -215,6 +217,9 @@ server_connection:
   # Optional
   # if not provided, we assume you want to ssh in as root.
   ssh_user: someuser
+  # Optional
+  # if an ssh_user is provided, you can provide an ssh password for that user
+  ssh_user_password: "somepassword"
   # Optional
   # if used, this needs to be the path to an ssh key, or if the file is in the same directory this can be the ssh key name directly
   ssh_key: id_rsa
@@ -301,5 +306,4 @@ configurations:
 - someFile1.py --runAs=root
 - someFile2.pl --someparam=somevalue
 - someFile3.sh
-
 ```
