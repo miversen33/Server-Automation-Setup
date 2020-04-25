@@ -164,7 +164,7 @@ def run_remotely(server_connection, command, extra_params, extra_info):
             try:
                 if 'reboot' in command:
                     server_connection.sudo(f'''rm -rf {TMP_PATH}''', hide=not VERBOSE, watchers=[SUDOPASS_LAMBDA(server_connection.sudopass)])
-                server_connection.sudo(f'''{command}''', watchers=[SUDOPASS_LAMBDA(server_connection.sudopass)], hide=not VERBOSE)
+                server_connection.sudo(f'''{command}''', watchers=[SUDOPASS_LAMBDA(server_connection.sudopass)], hide=False)
                 successful = True
             except Exception as exception:
                 print(exception)
@@ -178,8 +178,7 @@ def run_remotely(server_connection, command, extra_params, extra_info):
     if extra_params == 'copy_ssh_key':
         try:
             user = extra_info
-            if VERBOSE:
-                print(f'Copying ssh key over to {user.username}')
+            print(f'Copying ssh key over to {user.username}')
             tmp_path = f'{TMP_PATH}/{user.username}/'
             output = server_connection.sudo(f'''python3 -c "from os.path import expanduser; print(expanduser('~{user.username}'))"''', hide=not VERBOSE, watchers=[SUDOPASS_LAMBDA(server_connection.sudopass)])
             final_path = f'{output.stdout.rstrip()}/.ssh'
