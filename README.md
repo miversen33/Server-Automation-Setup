@@ -3,27 +3,30 @@
 A helper program that will setup a remote server for you
 
 ## Table Of Contents
-- [Server Automation Setup](#server-automation-setup)
-  - [Table Of Contents](#table-of-contents)
-    - [Installation](#installation)
-      - [PIP](#pip)
-      - [Manual](#manual)
-      - [Dependencies](#dependencies)
-      - [Uninstallation](#uninstallation)
-    - [How To Run](#how-to-run)
-      - [Available parameters](#available-parameters)
-      - [What About Server Failure?](#what-about-server-failure)
-    - [Configuration](#configuration)
-      - [JSON](#json)
-    - [YAML](#yaml)
+- [Installation](#installation)
+  - [PIP](#pip)
+  - [Manual](#manual)
+  - [Dependencies](#dependencies)
+  - [Uninstallation](#uninstallation)
+- [How To Run](#how-to-run)
+  - [Available parameters](#available-parameters)
+  - [What About Server Failure?](#what-about-server-failure)
+- [Configuration](#configuration)
+  - [JSON](#json)
+- [YAML](#yaml)
 
-### Installation
-#### PIP
+***
+<br>
+
+## Installation
+### PIP
 [Server Automation Setup](https://pypi.org/project/server-automation-setup/) can be installed from pip via 
 ```
 python3 -m pip install server-automation-setup
 ```
-#### Manual
+<br>
+
+### Manual
 Or if you are feeling adventurous, you can download the install script from github and run the following command.
 ```
 curl https://raw.githubusercontent.com/miversen33/Server-Automation-Setup/master/install-script.py >> /tmp/install-script.py && python3 /tmp/install-script.py
@@ -34,9 +37,9 @@ Once its finished, you should see output that looks like
 ```
 Finished! Execute 'serverautomation --help' to get started!
 ```
+<br>
 
-
-#### Dependencies
+### Dependencies
 Regardless of which decision you chose for installation, our dependencies are already installed. 
 The programs we rely on to function properly are
 * [YAML](https://github.com/yaml/pyyaml)
@@ -44,8 +47,9 @@ The programs we rely on to function properly are
 * [Invoke](https://github.com/pyinvoke/invoke)
 * [Paramiko](https://github.com/paramiko/paramiko)
 
+<br>
 
-#### Uninstallation
+### Uninstallation
 If you installed the server automation tool via pip, you can uninstall it with the following command 
 ```
 python3 -m pip uninstall server-automation-setup
@@ -57,13 +61,15 @@ curl https://raw.githubusercontent.com/miversen33/Server-Automation-Setup/master
 ```
 [**NOTE: Be careful executing random files off the internet. Always inspect them first**](https://github.com/miversen33/Server-Automation-Setup/blob/master/install-script.py)
 
+***
+<br>
 
-### How To Run
+## How To Run
 Running the setup script is easy. Simply provide it a configuration file to load and it handles everything else.
 ```
 serverautomation -f=yourfile
 ```
-#### Available parameters
+### Available parameters
 ```
 -f, --file: Your configuration File.
     This must be a JSON or YAML file, unless the script excplicitly gives you a file to run.
@@ -73,18 +79,20 @@ serverautomation -f=yourfile
 -e, --onfail: How to handle failure. Options are (continue:default, die)
 ```
 
-#### What About Server Failure?
+### What About Server Failure?
 It happens. Something causes one of the installation scripts to crash. The server is bounced. One of the external scripts breaks. Etc.
 So what happens when a failure occurs while setting up your shiny new server? When an error occurs, we handle it (depending on what [`--onfail`](#available-parameters) is set to). Regardless of the status of [`--onfail`](#available-parameters), we will keep track of the script(s) that fail during setup. Once we are finished running, if failures were found, we provide you a special file that you can use to only execute the failed script(s). It will look something like this
 ```
 Server Setup completed with errors. To rerun failed scripts, execute the following command. serverautomation --file 127.0.0.1-20200420-202251
 ```
 
+***
+<br>
 
-### Configuration
+## Configuration
 Configuration files can be provided in either [JSON](#json) or [YAML](#yaml) formats. Below are those 2 formats, with documentation of any available options that can be provided
 
-#### [JSON](https://github.com/miversen33/Server-Automation-Setup/blob/master/setupconfig.doc.json)
+### [JSON](https://github.com/miversen33/Server-Automation-Setup/blob/master/setupconfig.doc.json)
 ```
 {
     "server_connection": {
