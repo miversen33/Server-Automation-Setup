@@ -108,6 +108,8 @@ class Configuration:
 
         def get_run_command(self, dal):
             shell_path = dal.get_program_path(self._user.shell)
+            if not shell_path:
+                raise Exception(f'No Path For User Shell {self._user.shell} Found!')
             password = dal.encrypt_password(self._user.password)
             self.user_add_command = self.user_add_command.replace(Configuration.UserConfig.__PASSWORD_PLACEHOLDER, password)
             self.user_add_command = self.user_add_command.replace(Configuration.UserConfig.__SHELL_PLACEHOLDER, shell_path)
