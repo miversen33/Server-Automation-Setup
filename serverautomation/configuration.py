@@ -5,6 +5,7 @@ import sys
 import getpass
 import invoke
 import crypt
+import platform
 
 try:
     import yaml
@@ -38,16 +39,22 @@ class Configuration:
             if self.ssh_key:
                 if 'default' == self.ssh_key.lower():
                     current_user = getuser()
-                    # TODO Make this OS agnostic
-                    ssh_key = f'/home/{current_user}/.ssh/id_rsa.pub'
+                    if platform.system() == 'Windows':
+                        ssh_key = os.path.join('C:\\', 'Users', current_user, '.ssh', 'id_rsa.pub')
+                    else:
+                        ssh_key = os.path.join('/home', current_user, '.ssh', 'id_rsa.pub')
                     if os.path.exists(ssh_key):
                         self.ssh_key = ssh_key
                     else:
                         print(f'Unable to default ssh key for user: {current_user}')
                         self.ssh_key = None
-                elif "/" not in self.ssh_key:
+                elif "/" not in self.ssh_key and "\\" not in self.ssh_key:
                     current_user = getuser()
-                    ssh_key = f'/home/{current_user}/.ssh/{self.ssh_key}.pub'
+                    if platform.system() == 'Windows':
+                        ssh_key = os.path.join('C:\\', 'Users', current_user, '.ssh', f'{self.ssh_key}.pub')
+                    else:
+                        ssh_key = os.path.join('/home', current_user, '.ssh', f'{self.ssh_key}.pub')
+
                     if os.path.exists(ssh_key):
                         self.ssh_key = ssh_key
                     else:
@@ -184,8 +191,10 @@ class Configuration:
         def __parse_ssh_key(self, ssh_key):
             if ssh_key is None:
                 current_user = getuser()
-                # TODO make this os independent
-                check_ssh_key = f'/home/{current_user}/.ssh/id_rsa'
+                if platform.system() == 'Windows':
+                    ssh_key = os.path.join('C:\\', 'Users', current_user, '.ssh', 'id_rsa')
+                else:
+                    check_ssh_key = os.path.join('/home', current_user, '.ssh', 'id_rsa')
                 if os.path.exists(check_ssh_key):
                     ssh_key = check_ssh_key
                     if Configuration.VERBOSE:
