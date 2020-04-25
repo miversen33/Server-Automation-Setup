@@ -21,6 +21,7 @@ import random
 import subprocess
 import pickle
 import datetime
+import platform
 
 try:
     import yaml
@@ -72,8 +73,15 @@ SUDOPASS_LAMBDA = lambda elevation_password: Responder(
 )
 
 DEBUG = False
-TMP_PATH = f'/tmp/{randint(0, 10000)}'
-CACHE_DIR = f'/home/{getuser()}/.serverautomation/'
+TMP_PATH = ''
+CACHE_DIR = ''
+if platform.system() == 'Windows':
+    TMP_PATH = os.path.join('C:\\', 'Users', getuser(), 'AppData', 'Local', 'serverautomation', 'tmp')
+    CACHE_DIR = os.path.join('C:\\', 'Users', getuser(), 'AppData', 'Local', 'serverautomation')
+else:
+    TMP_PATH = os.path.join('/tmp', randint(0, 10000))
+    CACHE_DIR = os.path.join(f'/home', getuser(), '.serverautomation')
+
 try:
     os.mkdir(CACHE_DIR)
 except FileExistsError:
