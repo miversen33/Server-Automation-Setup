@@ -50,7 +50,6 @@ The programs we rely on to function properly are
 <br>
 
 ### Uninstallation
-If you installed the server automation tool via pip, you can uninstall it with the following command 
 ```
 python3 -m pip uninstall server-automation-setup
 ```
@@ -61,16 +60,16 @@ python3 -m pip uninstall server-automation-setup
 ## How To Run
 Running the setup script is easy. Simply provide it a configuration file to load and it handles everything else.
 ```
-serverautomation -f=yourfile
+serverautomation -f=yourfile.validextension
 ```
 ### Available parameters
 ```
 -f, --file: Your configuration File.
-    This must be a JSON or YAML file, unless the script excplicitly gives you a file to run.
+    This must be a JSON or YAML file, unless the script explicitly gives you a file to run.
 -v, --verbose: Tells the system to print out more details
 -d, --debug: When enabled, we will still connect to the remote server, 
     but then we simply dump all the commands we would run to the terminal window for the user to see
--e, --onfail: How to handle failure. Options are (continue:default, die)
+-e, --onfail: How to handle failure. Options are (continue, die). Default is continue
 ```
 
 ### What About Server Failure?
