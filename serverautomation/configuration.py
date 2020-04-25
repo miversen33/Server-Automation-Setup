@@ -167,6 +167,30 @@ class Configuration:
             else:
                 raise Exception('No Input Provided')
 
+            self._validate_params()
+
+        def _validate_params(self):
+            if not self.ssh_user and not self.ssh_key:
+                auth_method = self._get_auth_method('user', 'key')
+                self._validate_auth_method(auth_method)
+            if not self.elevation_pass:
+                self.elevation_pass = getpass('Please enter your elevation (sudo) password: ')
+
+        def _get_auth_method(self, *auth_methods, retry_limit=3, retry_count=0):
+            print('No Authentication Method Found. Please enter either "user" or "key" to provide that authentication method')
+            auth_method = input('? ').lower()
+            if auth_method not in auth_methods:
+                if retry_count >= retry_limit:
+                    raise Exception("Invalid Authentication Method Provided")
+                self._get_auth_method(auth_methods, retry_limit, retry_count + 1)
+        
+        def _validate_auth_method(self, auth_method):
+            if auth_method.lower() == 'user':
+                self.ssh_user = input('Please enter username: ')
+                self.ssh_user_password = getpass(f"Please enter {self.ssh_user}'s password: ")
+            if auth_method.lower() == 'key':
+                self.ssh_key = input('Please enter ssh_key path (or enter default to attempt auto retrieval of key): ')
+
         def get_run_command(self, dal):
             raise NotImplementedError('Connection Configuration Is Not Runnable')
 
