@@ -134,6 +134,13 @@ class DistroAbstractionLayer:
             output = Run(command.split(' '), stdout=subprocess.PIPE).stdout.decode('utf-8')
         return [group.split(':')[0] for group in output.split('\n')]
 
+    def encrypt_password(self, password):
+        input_command = f'''python3 -c "from crypt import crypt; print(crypt('{password}').replace('$',r'$'))'''
+        if self._connection:
+            return self._connection.run(input_command, hide=True).stdout
+        else:
+            return lambda: Run(input_command.split(' '), stdout=subprocess.PIPE).stdout.decode('utf-8')
+
     def get_program_path(self, program):
         input_command = f'which {program}'
         if self._connection:

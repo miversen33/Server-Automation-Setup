@@ -4,7 +4,6 @@ import json
 import sys
 import getpass
 import invoke
-import crypt
 import platform
 
 try:
@@ -14,7 +13,6 @@ except ImportError:
 
 from invoke import Responder
 from getpass import getuser
-from crypt import crypt
 
 JSON = ['json',]
 YAML = ['yaml' ,'yml']
@@ -101,6 +99,7 @@ class Configuration:
     class UserConfig(Config):
         __GROUPS_PLACEHOLDER = '$GROUPS$'
         __SHELL_PLACEHOLDER = '$SHELL$'
+        __PASSWORD_PLACEHOLDER = '$PASSWORD$'
         
         def __init__(self, user):
             super().__init__()
@@ -109,7 +108,10 @@ class Configuration:
 
         def get_run_command(self, dal):
             shell_path = dal.get_program_path(self._user.shell)
+            password = dal.encrypt_password(self._user.password)
+            self.user_add_command = self.user_add_command.replace(Configuration.UserConfig.__PASSWORD_PLACEHOLDER, password)
             self.user_add_command = self.user_add_command.replace(Configuration.UserConfig.__SHELL_PLACEHOLDER, shell_path)
+
             if self._user.groups:
                 groups = dal.get_groups_on_server()
                 # If you put the wrong admin group, we will attempt to fix it for you
@@ -149,7 +151,7 @@ class Configuration:
             self.user_add_command += f'--shell={Configuration.UserConfig.__SHELL_PLACEHOLDER} '
             self.user_add_command += Configuration.UserConfig.__GROUPS_PLACEHOLDER
             if self._user.password:
-                self.user_add_command += "--password '" + crypt(self._user.password).replace("$",r"$") + "' "
+                self.user_add_command += f"--password '{Configuration.UserConfig.__PASSWORD_PLACEHOLDER}' "
             self.user_add_command += self._user.username
 
     class ConnectionConfig(Config):
