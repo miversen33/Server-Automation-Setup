@@ -432,13 +432,16 @@ class Configuration:
             sys.exit(1)
 
         connection_setup = None
-        extension = input_file.split('.')[1]
+        extension = input_file.split('.')[-1]
         if extension in JSON:
             with open(input_file) as json_data:
                 connection_setup = json.load(json_data)
         if extension in YAML:
             with open(input_file) as yaml_data:
                 connection_setup = yaml.safe_load(yaml_data)
+
+        if not connection_setup:
+            raise Exception(f'Unable to load configuration file {input_file}')
 
         if 'server_connection' in connection_setup.keys():
             self.connection_config = Configuration.ConnectionConfig(connection_setup['server_connection'])
