@@ -28,7 +28,7 @@ class Configuration:
             self.password = password
             self.shell = user_shell if (user_shell is not None and not user_shell.isspace() and len(user_shell) > 0) else '"/usr/bin/bash"' 
             self.is_system_user = True if (system_user is not None and not system_user.isspace() and len(system_user) > 0 and system_user.lower() != 'false') else False
-            self.groups = user_groups if (user_groups is not None and not user_groups.isspace() and len(user_groups) > 0) else []
+            self.groups = [group for group in user_groups if not group.isspace()] if user_groups is not None else []
             self.home_directory = home_directory if (home_directory is not None and not home_directory.isspace() and len(home_directory) > 0) else None
             self.install_shell_if_missing = install_shell_if_missing
             if isinstance(self.groups, str):
