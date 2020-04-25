@@ -149,7 +149,7 @@ class Configuration:
             self.user_add_command += f'--shell={Configuration.UserConfig.__SHELL_PLACEHOLDER} '
             self.user_add_command += Configuration.UserConfig.__GROUPS_PLACEHOLDER
             if self._user.password:
-                self.user_add_command += '--password ' + crypt(self._user.password).replace("$",r"$") + ' '
+                self.user_add_command += "--password '" + crypt(self._user.password).replace("$",r"$") + "' "
             self.user_add_command += self._user.username
 
     class ConnectionConfig(Config):
