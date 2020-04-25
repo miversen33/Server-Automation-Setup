@@ -24,7 +24,11 @@ python3 -m pip install server-automation-setup
 #### Manual
 Or if you are feeling adventurous, you can download the install script from github and run that
 ```
-curl https://github.com/miversen33/Server-Automation-Setup/install-script.py --output /tmp/install-script.py && python3 /tmp/install-script.py
+curl https://raw.githubusercontent.com/miversen33/Server-Automation-Setup/master/install-script.py >> /tmp/install-script.py && python3 /tmp/install-script.py
+```
+Once its finished, you should see output that looks like 
+```
+Finished! Execute 'serverautomation --help' to get started!
 ```
 
 #### Dependencies
