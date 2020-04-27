@@ -148,12 +148,10 @@ Configuration files can be provided in either [JSON](#json) or [YAML](#yaml) for
     ],
     "dependencies": [
         // Optional
-        // Experimental
         // We will attempt to install the dependencies in this list regardless of the distro of the box
         // we are on
         "someprogram1","someprogram2","someprogram3"
     ],
-    // EXPIRAMENTAL!
     // Optional
     "server_configuration": {
         // Sets the hostname of the server to the provided hostname
